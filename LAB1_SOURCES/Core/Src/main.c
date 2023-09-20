@@ -96,10 +96,12 @@ int main(void)
   	int red_time = 500; // stage 3
   	int count = green_time;
   	int stage = 1;
-  	HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
-  	HAL_GPIO_TogglePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin);
-  	HAL_GPIO_TogglePin(LED_GREEN_2_GPIO_Port, LED_GREEN_2_Pin);
-  	HAL_GPIO_TogglePin(LED_YELLOW_2_GPIO_Port, LED_YELLOW_2_Pin);
+  	HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, 1);
+  	HAL_GPIO_WritePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin, 1);
+  	HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, 0);
+  	HAL_GPIO_WritePin(LED_RED_2_GPIO_Port, LED_RED_2_Pin, 0);
+	HAL_GPIO_WritePin(LED_YELLOW_2_GPIO_Port, LED_YELLOW_2_Pin, 1);
+	HAL_GPIO_WritePin(LED_GREEN_2_GPIO_Port, LED_GREEN_2_Pin, 1);
   	while (1)
   	{
   	if (stage == 1) {
@@ -116,6 +118,7 @@ int main(void)
   		  stage = 3;
   		  HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin); // on red 1
   		  HAL_GPIO_TogglePin(LED_GREEN_2_GPIO_Port, LED_GREEN_2_Pin); // on green 2
+  		  HAL_GPIO_TogglePin(LED_RED_2_GPIO_Port, LED_RED_2_Pin); // off red 2
   		  HAL_GPIO_TogglePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin); // off yellow 1
   	  }
   	}
@@ -131,10 +134,12 @@ int main(void)
   	  	  if (count <= 0) {
   	  		  count = green_time;
   	  		  stage = 1;
-  	  		  HAL_GPIO_TogglePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin);  //off green 1
-  	  		  HAL_GPIO_TogglePin(LED_YELLOW_2_GPIO_Port, LED_YELLOW_2_Pin); //off yellow 2
-  	  		  HAL_GPIO_TogglePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin); //on green 1
-  	  		  HAL_GPIO_TogglePin(LED_RED_2_GPIO_Port, LED_RED_2_Pin); //on red 2
+  	  	  	HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, 1);
+  	  	  	HAL_GPIO_WritePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin, 1);
+  	  	  	HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, 0);
+  	  	  	HAL_GPIO_WritePin(LED_RED_2_GPIO_Port, LED_RED_2_Pin, 0);
+  	  		HAL_GPIO_WritePin(LED_YELLOW_2_GPIO_Port, LED_YELLOW_2_Pin, 1);
+  	  		HAL_GPIO_WritePin(LED_GREEN_2_GPIO_Port, LED_GREEN_2_Pin, 1);
   	  	  }
   	  	}
 
