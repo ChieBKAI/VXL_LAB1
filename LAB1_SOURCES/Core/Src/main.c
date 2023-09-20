@@ -205,10 +205,19 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
+  int count = 200;
   while (1)
   {
-	  setOnAllClock();
+	  if (count < 100) {
+		  setOnAllClock();
+	  }
+	  if (count < 100 && count > 0) {
+		  clearAllClock();
+	  }
+	  if (count <= 0) {
+		  count = 200;
+	  }
+	  count = count - 1;
 	  HAL_Delay(10);
   }
   /* USER CODE END 3 */
