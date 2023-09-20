@@ -54,7 +54,7 @@ static void MX_GPIO_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void display7SEG(int num) {
+void display7SEG(int num, int vertical) {
     // Define the 7-segment patterns for each digit
     const uint8_t segmentPatterns[] = {
         0b11000000, // 0
@@ -74,16 +74,28 @@ void display7SEG(int num) {
         // Handle invalid input
         return;
     }
-
-    // Set the GPIO pins according to the 7-segment pattern for the digit
-    HAL_GPIO_WritePin(SEG_A_GPIO_Port, SEG_A_Pin, (segmentPatterns[num] >> 0) & 1);
-    HAL_GPIO_WritePin(SEG_B_GPIO_Port, SEG_B_Pin, (segmentPatterns[num] >> 1) & 1);
-    HAL_GPIO_WritePin(SEG_C_GPIO_Port, SEG_C_Pin, (segmentPatterns[num] >> 2) & 1);
-    HAL_GPIO_WritePin(SEG_D_GPIO_Port, SEG_D_Pin, (segmentPatterns[num] >> 3) & 1);
-    HAL_GPIO_WritePin(SEG_E_GPIO_Port, SEG_E_Pin, (segmentPatterns[num] >> 4) & 1);
-    HAL_GPIO_WritePin(SEG_F_GPIO_Port, SEG_F_Pin, (segmentPatterns[num] >> 5) & 1);
-    HAL_GPIO_WritePin(SEG_G_GPIO_Port, SEG_G_Pin, (segmentPatterns[num] >> 6) & 1);
+    if (vertical == 1) {
+        // Set the GPIO pins according to the 7-segment pattern for the digit
+        HAL_GPIO_WritePin(SEG1_A_GPIO_Port, SEG1_A_Pin, (segmentPatterns[num] >> 0) & 1);
+        HAL_GPIO_WritePin(SEG1_B_GPIO_Port, SEG1_B_Pin, (segmentPatterns[num] >> 1) & 1);
+        HAL_GPIO_WritePin(SEG1_C_GPIO_Port, SEG1_C_Pin, (segmentPatterns[num] >> 2) & 1);
+        HAL_GPIO_WritePin(SEG1_D_GPIO_Port, SEG1_D_Pin, (segmentPatterns[num] >> 3) & 1);
+        HAL_GPIO_WritePin(SEG1_E_GPIO_Port, SEG1_E_Pin, (segmentPatterns[num] >> 4) & 1);
+        HAL_GPIO_WritePin(SEG1_F_GPIO_Port, SEG1_F_Pin, (segmentPatterns[num] >> 5) & 1);
+        HAL_GPIO_WritePin(SEG1_G_GPIO_Port, SEG1_G_Pin, (segmentPatterns[num] >> 6) & 1);
+    }
+    if (vertical == 0) {
+        // Set the GPIO pins according to the 7-segment pattern for the digit
+        HAL_GPIO_WritePin(SEG_A_GPIO_Port, SEG_A_Pin, (segmentPatterns[num] >> 0) & 1);
+        HAL_GPIO_WritePin(SEG_B_GPIO_Port, SEG_B_Pin, (segmentPatterns[num] >> 1) & 1);
+        HAL_GPIO_WritePin(SEG_C_GPIO_Port, SEG_C_Pin, (segmentPatterns[num] >> 2) & 1);
+        HAL_GPIO_WritePin(SEG_D_GPIO_Port, SEG_D_Pin, (segmentPatterns[num] >> 3) & 1);
+        HAL_GPIO_WritePin(SEG_E_GPIO_Port, SEG_E_Pin, (segmentPatterns[num] >> 4) & 1);
+        HAL_GPIO_WritePin(SEG_F_GPIO_Port, SEG_F_Pin, (segmentPatterns[num] >> 5) & 1);
+        HAL_GPIO_WritePin(SEG_G_GPIO_Port, SEG_G_Pin, (segmentPatterns[num] >> 6) & 1);
+    }
 }
+
 /* USER CODE END 0 */
 
 /**
@@ -124,6 +136,7 @@ int main(void)
   int yellow_time = 200; // stage 2
   int red_time = 500; // stage 3
   int count = -1;
+  int count_vertical = -1;
   int stage = 4;
   while (1)
   {
@@ -138,6 +151,7 @@ int main(void)
       if (stage == 2) {
           if (count <= 0) {
               count = red_time;
+              count_vertical = green_time;
               stage = 3;
               HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, 0); // Turn on red 1
               HAL_GPIO_WritePin(LED_GREEN_2_GPIO_Port, LED_GREEN_2_Pin, 0); // Turn on green 2
@@ -146,8 +160,8 @@ int main(void)
           }
       }
       if (stage == 3) {
-          if (count <= 0) {
-              count = yellow_time;
+    	  if (count_vertical <= 0) {
+              count_vertical = yellow_time;
               stage = 4;
               HAL_GPIO_WritePin(LED_GREEN_2_GPIO_Port, LED_GREEN_2_Pin, 1); // Turn off green 2
               HAL_GPIO_WritePin(LED_YELLOW_2_GPIO_Port, LED_YELLOW_2_Pin, 0); // Turn on yellow 2
@@ -156,6 +170,7 @@ int main(void)
       if (stage == 4) {
           if (count <= 0) {
               count = green_time;
+              count_vertical = red_time;
               stage = 1;
               HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, 1);
               HAL_GPIO_WritePin(LED_YELLOW_GPIO_Port, LED_YELLOW_Pin, 1);
@@ -165,8 +180,10 @@ int main(void)
               HAL_GPIO_WritePin(LED_GREEN_2_GPIO_Port, LED_GREEN_2_Pin, 1);
           }
       }
-      display7SEG((count / 100) + 1);
+      display7SEG(count/100 + 1, 0);
+      display7SEG(count_vertical/100 + 1, 1);
       count = count - 1;
+      count_vertical = count_vertical - 1;
       HAL_Delay(10);
   }
 
@@ -222,15 +239,21 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, LED_RED_Pin|LED_YELLOW_Pin|LED_GREEN_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, SEG1_A_Pin|SEG1_B_Pin|SEG1_C_Pin|SEG1_D_Pin
+                          |SEG1_E_Pin|SEG1_F_Pin|SEG1_G_Pin|LED_RED_Pin
+                          |LED_YELLOW_Pin|LED_GREEN_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, SEG_A_Pin|SEG_B_Pin|SEG_C_Pin|SEG_D_Pin
                           |SEG_E_Pin|SEG_F_Pin|SEG_G_Pin|LED_RED_2_Pin
                           |LED_YELLOW_2_Pin|LED_GREEN_2_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : LED_RED_Pin LED_YELLOW_Pin LED_GREEN_Pin */
-  GPIO_InitStruct.Pin = LED_RED_Pin|LED_YELLOW_Pin|LED_GREEN_Pin;
+  /*Configure GPIO pins : SEG1_A_Pin SEG1_B_Pin SEG1_C_Pin SEG1_D_Pin
+                           SEG1_E_Pin SEG1_F_Pin SEG1_G_Pin LED_RED_Pin
+                           LED_YELLOW_Pin LED_GREEN_Pin */
+  GPIO_InitStruct.Pin = SEG1_A_Pin|SEG1_B_Pin|SEG1_C_Pin|SEG1_D_Pin
+                          |SEG1_E_Pin|SEG1_F_Pin|SEG1_G_Pin|LED_RED_Pin
+                          |LED_YELLOW_Pin|LED_GREEN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
