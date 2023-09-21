@@ -205,91 +205,6 @@ void displayLED(int hour, int minute, int sec) {
 	}
 }
 
-void unDisplayLED(int hour, int minute) {
-	if (hour <= 0 || hour > 12 || minute < 0 || minute > 59) {
-		// Handle invalid input
-		return;
-	}
-
-	setOnAllClock();
-
-	if (hour == 12) {
-		HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, 1);
-	}
-	if (hour == 1) {
-		HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 1);
-	}
-	if (hour == 2) {
-		HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, 1);
-	}
-	if (hour == 3) {
-		HAL_GPIO_WritePin(LED_4_GPIO_Port, LED_4_Pin, 1);
-	}
-	if (hour == 4) {
-		HAL_GPIO_WritePin(LED_5_GPIO_Port, LED_5_Pin, 1);
-	}
-	if (hour == 5) {
-		HAL_GPIO_WritePin(LED_6_GPIO_Port, LED_6_Pin, 1);
-	}
-	if (hour == 6) {
-		HAL_GPIO_WritePin(LED_7_GPIO_Port, LED_7_Pin, 1);
-	}
-	if (hour == 7) {
-		HAL_GPIO_WritePin(LED_8_GPIO_Port, LED_8_Pin, 1);
-	}
-	if (hour == 8) {
-		HAL_GPIO_WritePin(LED_9_GPIO_Port, LED_9_Pin, 1);
-	}
-	if (hour == 9) {
-		HAL_GPIO_WritePin(LED_10_GPIO_Port, LED_10_Pin, 1);
-	}
-	if (hour == 10) {
-		HAL_GPIO_WritePin(LED_11_GPIO_Port, LED_11_Pin, 1);
-	}
-	if (hour == 11) {
-		HAL_GPIO_WritePin(LED_12_GPIO_Port, LED_12_Pin, 1);
-	}
-
-	if (minute >= 0 && minute < 5) {
-		HAL_GPIO_WritePin(LED_1_GPIO_Port, LED_1_Pin, 1);
-	}
-	if (minute >= 5 && minute < 10) {
-			HAL_GPIO_WritePin(LED_2_GPIO_Port, LED_2_Pin, 1);
-	}
-	if (minute >= 10 && minute < 15) {
-			HAL_GPIO_WritePin(LED_3_GPIO_Port, LED_3_Pin, 1);
-	}
-	if (minute >= 15 && minute < 20) {
-			HAL_GPIO_WritePin(LED_4_GPIO_Port, LED_4_Pin, 1);
-	}
-	if (minute >= 20 && minute < 25) {
-			HAL_GPIO_WritePin(LED_5_GPIO_Port, LED_5_Pin, 1);
-	}
-	if (minute >= 25 && minute < 30) {
-			HAL_GPIO_WritePin(LED_6_GPIO_Port, LED_6_Pin, 1);
-	}
-	if (minute >= 30 && minute < 35) {
-			HAL_GPIO_WritePin(LED_7_GPIO_Port, LED_7_Pin, 1);
-	}
-	if (minute >= 35 && minute < 40) {
-			HAL_GPIO_WritePin(LED_8_GPIO_Port, LED_8_Pin, 1);
-	}
-	if (minute >= 40 && minute < 45) {
-			HAL_GPIO_WritePin(LED_9_GPIO_Port, LED_9_Pin, 1);
-	}
-	if (minute >= 45 && minute < 50) {
-			HAL_GPIO_WritePin(LED_10_GPIO_Port, LED_10_Pin, 1);
-	}
-	if (minute >= 50 && minute < 55) {
-			HAL_GPIO_WritePin(LED_11_GPIO_Port, LED_11_Pin, 1);
-	}
-	if (minute >= 55) {
-			HAL_GPIO_WritePin(LED_12_GPIO_Port, LED_12_Pin, 1);
-	}
-}
-
-
-
 /* USER CODE END 0 */
 
 /**
@@ -332,21 +247,25 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	  displayLED(12 - hour%12, 60 - minute/10, 60 - sec/10);
+	  if (sec % 5 == 0) {
+		  displayLED(12 - hour%12, 60 - minute, 60 - sec);
+	  }
 	  if (sec <= 0 ) {
 		  sec = 60;
 		  minute = minute - 1;
 	  }
 	  if (minute <= 0) {
 		  minute = 60;
+		  sec = 60;
 		  hour = hour - 1;
 	  }
-	  if (hour <= 0 && minute <= 0) {
+	  if (hour <= 0) {
 		  hour = 24;
 		  minute = 60;
 		  sec = 60;
 	  }
-	  HAL_Delay(500);
+	  sec = sec - 1;
+	  HAL_Delay(10);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
